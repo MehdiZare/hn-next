@@ -1,14 +1,12 @@
 import type {Metadata} from 'next'
 import {Inter} from 'next/font/google'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import '@/styles/globals.css'
+import './globals.css'
 
 const inter = Inter({subsets: ['latin']})
 
 export const metadata: Metadata = {
-    title: 'HackerNews Dashboard',
-    description: 'Explore top posts and users from HackerNews',
+    title: 'HN Dashboard',
+    description: 'Hacker News Dashboard - Explore top posts and users',
 }
 
 export default function RootLayout({
@@ -18,12 +16,23 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-        <body className={`${inter.className} flex flex-col min-h-screen`}>
-        <Navbar/>
-        <main className="container mx-auto px-4 mb-8 flex-grow">
-            {children}
-        </main>
-        <Footer/>
+        <body className={inter.className}>
+        <div className="min-h-screen flex flex-col">
+            <main className="flex-grow">
+                {children}
+            </main>
+            <footer className="bg-gray-100 border-t-2 border-hn-orange py-4 mt-8">
+                <div className="container mx-auto text-center">
+                    <p>Created by <a href="https://www.linkedin.com/in/mehdizare/" target="_blank"
+                                     rel="noopener noreferrer" className="text-hn-orange hover:underline">Mehdi Zare</a>
+                    </p>
+                    <p className="text-sm mt-2">
+                        <small>Disclaimer: This is an experimental project built out of curiosity. It is not officially
+                            affiliated with Y Combinator or Hacker News.</small>
+                    </p>
+                </div>
+            </footer>
+        </div>
         </body>
         </html>
     )
