@@ -88,5 +88,8 @@ export type DailyActivity = {
     comments_count: number;
 };
 
-
+export type PostType = {
+    type: string;
+    count: number;
+};
 

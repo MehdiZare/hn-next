@@ -1,4 +1,4 @@
-'use client'
+// src/components/PostTypeChart.tsx
 
 import { useState, useEffect } from 'react'
 import { getPostTypes, PostType } from '@/utils/api'
@@ -7,79 +7,53 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-interface PostTypeChartProps {
+type PostTypeChartProps = {
     dateRange: string
 }
 
 export default function PostTypeChart({ dateRange }: PostTypeChartProps) {
     const [postTypes, setPostTypes] = useState<PostType[]>([])
-    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        async function fetchPostTypes() {
+        const fetchData = async () => {
             try {
                 const data = await getPostTypes(dateRange)
                 setPostTypes(data)
             } catch (error) {
                 console.error('Error fetching post types:', error)
-                setError('Failed to load post types')
             }
         }
-
-        fetchPostTypes()
+        fetchData()
     }, [dateRange])
 
-    if (error) {
-        return (
-            <div className="card">
-                <h2 className="card-header">Post Type Distribution</h2>
-                <p className="text-red-500 p-4">{error}</p>
-            </div>
-        )
-    }
-
-    if (postTypes.length === 0) {
-        return (
-            <div className="card">
-                <h2 className="card-header">Post Type Distribution</h2>
-                <p className="p-4">Loading...</p>
-            </div>
-        )
-    }
-
-    const chartData = {
-        labels: postTypes.map(pt => pt.type),
+    const data = {
+        labels: postTypes.map(type => type.type),
         datasets: [
             {
-                data: postTypes.map(pt => pt.count),
+                data: postTypes.map(type => type.count),
                 backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40'
-                ]
-            }
-        ]
-    }
-
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right' as const,
-            }
-        }
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                ],
+                borderWidth: 1,
+            },
+        ],
     }
 
     return (
-        <div className="card">
-            <h2 className="card-header">Post Type Distribution</h2>
-            <div className="p-4" style={{ height: '300px' }}>
-                <Pie data={chartData} options={options} />
-            </div>
+        <div className="bg-white shadow rounded-lg p-4">
+            <h2 className="text-lg font-semibold mb-4 text-hn-orange">Post Types</h2>
+            <Pie data={data} />
         </div>
     )
 }
