@@ -6,6 +6,10 @@ async function fetchApi(endpoint: string) {
     try {
         const response = await fetch(`${baseUrl}${endpoint}`);
         if (!response.ok) {
+            if (response.status === 404) {
+                console.error(`Resource not found at ${endpoint}`);
+                return null;
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const contentType = response.headers.get("content-type");
@@ -20,6 +24,7 @@ async function fetchApi(endpoint: string) {
     }
 }
 
+
 export async function getScoreboard() {
     return fetchApi('/statistics/scoreboard');
 }
@@ -30,7 +35,6 @@ export async function getTopPosts(dateRange: string) {
 }
 
 export async function getTopUsers(dateRange: string) {
-    // Fetch more users than we need, we'll limit on the client side
     return fetchApi(`/users/top/${dateRange}?limit=100`);
 }
 
@@ -48,24 +52,41 @@ export type Scoreboard = {
     users_count: number;
 };
 
+// Update your TopPost and TopUser types if necessary
 export type TopPost = {
     id: number;
     title: string;
     score: number;
+    by: string;
+    time: string; // Changed from number to string
+    url?: string;
+    type: string; // Added this field
+    text?: string; // Added this field
+    descendants?: number; // Added this field
 };
 
 export type TopUser = {
-    user_id: string;
-    activity_score: number;
+    id: string; // Changed from user_id to id
+    karma: number;
+    created: string; // Changed from number to string
+    submitted_count: number; // Added this field
+    activity_score?: number; // Made this optional
 };
 
-export type PostType = {
-    type: string;
-    count: number;
-};
+export async function getPostById(id: string): Promise<TopPost | null> {
+    return fetchApi(`/posts/${id}`);
+}
+
+export async function getUserById(id: string): Promise<TopUser | null> {
+    return fetchApi(`/users/${id}`);
+}
+
 
 export type DailyActivity = {
     date: string;
     posts_count: number;
     comments_count: number;
 };
+
+
+
